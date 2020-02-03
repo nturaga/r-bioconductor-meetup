@@ -17,5 +17,3 @@ docker stop
 
 ## Kill it (Not so polite, interrupt the and kill)
 docker kill
-
-

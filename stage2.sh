@@ -2,13 +2,13 @@
 
 ## Devel
 docker run -e PASSWORD=bioc \
-       -v /shared/devel/library:/usr/local/lib/R/host-site-library \
-       -p 8888:8787 bioconductor/bioconductor_docker:devel
+       -v /Users/ni41435_lca/r-bioconductor-meetup/release:/usr/local/lib/R/host-site-library \
+       -p 8787:8787 bioconductor/bioconductor_docker:latest
 
 ## Install packagse
+BiocManager::install("Biobase")
 
-BiocManager::install("BiocParallel")
-
+## Show libPaths
 .libPaths()
 
 ## Let's stop both these containers
@@ -18,12 +18,48 @@ docker ps
 ## shut down process)
 docker stop
 
-## Start it up again
+## Start it up again to show packages available
+docker run -e PASSWORD=bioc \
+       -v /Users/ni41435_lca/r-bioconductor-meetup/release:/usr/local/lib/R/host-site-library \
+       -p 8787:8787 bioconductor/bioconductor_docker:latest
+
+## show packages
+rownames(installed.packages(.libPaths()[1]))
+
+## show library load
+library(Biobase)
+
+################
+## Add data and libraries
 
 docker run -e PASSWORD=bioc \
-       -v /shared/devel/library:/usr/local/lib/R/host-site-library \
-       -p 8888:8787 bioconductor/bioconductor_docker:devel
+       -v ~/Documents/:/home/rstudio \
+       -v /Users/ni41435_lca/r-bioconductor-meetup/release:/usr/local/lib/R/host-site-library \
+       -p 8787:8787 bioconductor/bioconductor_docker:latest
 
 
-library(BiocParallel)
+## Run containers interactively
+docker run -it bioconductor/bioconductor_docker:latest bash
 
+docker run -it bioconductor/bioconductor_docker:latest R
+
+## Connect to a running container
+
+docker ps
+
+docker exec -it <CONTAINER_ID> bash ## show tensorflow install
+
+## DISABLE_AUTH
+
+docker run \
+   -e DISABLE_AUTH=true \
+	-p 8787:8787  \
+       bioconductor/bioconductor_docker:latest
+
+## Run as ROOT, rstudio user gets root privileges
+
+docker run \
+   -e ROOT=true \
+   -e DISABLE_AUTH=true \
+   -p 8787:8787  \
+       bioconductor/bioconductor_docker:latest
